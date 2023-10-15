@@ -32,74 +32,131 @@
 //   )
 // }
 
+// const Hello = ({name, age}) => {
+//   const bornYear = () => new Date().getFullYear() - age
 
-const Header = (props) => {
-  console.log("Header props " + props)
-  return (
-    <h1>
-      {props.course}
-    </h1>
-  )
-}
+//   return (
+//     <div>
+//       <p>
+//         Hello {name}, you are {age} years old
+//       </p>
+//       <p>So you were probably born in {bornYear()}</p>
+//     </div>
+//   )
+// }
 
+// const App = () => {
+//   const name = 'Peter'
+//   const age = 10
 
-const Part = (props) => {
-  console.log("Part props: " + props)
-  return (
-    <p>
-      {props.part} {props.exercise}
-    </p>
-  )
-}
+//   return (
+//     <div>
+//       <h1>Greetings</h1>
+//       <Hello name="Maya" age={26+10}/>
+//       <Hello name={name} age={age}/>
+//     </div>
+//   )
+// }
 
-const Content = (props) => {
-  console.log("Content props: " + props)
-  return (
-    <div>
-      <Part part={props.parts[0].name} exercise={props.parts[0].exercises}/>
-      <Part part={props.parts[1].name} exercise={props.parts[1].exercises}/>
-      <Part part={props.parts[2].name} exercise={props.parts[2].exercises}/>
-    </div>
-  )
-}
+import { useState } from "react"
 
-const Total = (props) => {
-  console.log("Total props: " + props)
-  return (
-    <p>
-      Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}
-    </p>
-  )
-}
+const Display = ({counter}) => <div>{counter}</div>
+const Button = ({handleClick, text}) => <button onClick={handleClick}>{text}</button>
 
-//1.5
 const App = () => {
-  const course = {
-    name: 'Half Stack application development',
-    parts: [
-      {
-        name: 'Fundamentals of React',
-        exercises: 10
-      },
-      {
-        name: 'Using props to pass data',
-        exercises: 7
-      },
-      {
-        name: 'State of a component',
-        exercises: 14
-      }
-    ]
+  const [ counter, setCounter ] = useState(0)
+  console.log('rendering with counter value', counter)
+
+  const increaseByOne = () => {
+    console.log('increasing, value before', counter)
+    setCounter(counter + 1)
+  }
+  const decreaseByOne = () => {
+    console.log('decreasing, value before', counter)
+    setCounter(counter - 1)
+  }
+  const setToZero = () => {
+    console.log('resetting to zero, value before', counter)
+    setCounter(0)
   }
 
   return (
     <div>
-      <Header course={course.name}/>
-      <Content parts={course.parts}/>       
-      <Total parts={course.parts}/>
+      <Display counter={counter}/>
+      <Button handleClick={increaseByOne} text="Plus"/>
+      <Button handleClick={decreaseByOne} text="Minus"/>
+      <Button handleClick={setToZero} text="Zero"/>
     </div>
   )
 }
+
+// const Header = (props) => {
+//   console.log("Header props " + props)
+//   return (
+//     <h1>
+//       {props.course}
+//     </h1>
+//   )
+// }
+
+
+// const Part = (props) => {
+//   console.log("Part props: " + props)
+//   return (
+//     <p>
+//       {props.part} {props.exercise}
+//     </p>
+//   )
+// }
+
+// const Content = (props) => {
+//   console.log("Content props: " + props)
+//   return (
+//     <div>
+//       <Part part={props.parts[0].name} exercise={props.parts[0].exercises}/>
+//       <Part part={props.parts[1].name} exercise={props.parts[1].exercises}/>
+//       <Part part={props.parts[2].name} exercise={props.parts[2].exercises}/>
+//     </div>
+//   )
+// }
+
+// const Total = (props) => {
+//   console.log("Total props: " + props)
+//   return (
+//     <p>
+//       Number of exercises {props.parts[0].exercises + props.parts[1].exercises + props.parts[2].exercises}
+//     </p>
+//   )
+// }
+
+//1.5
+// const App = () => {
+//   const course = {
+//     name: 'Half Stack application development',
+//     parts: [
+//       {
+//         name: 'Fundamentals of React',
+//         exercises: 10
+//       },
+//       {
+//         name: 'Using props to pass data',
+//         exercises: 7
+//       },
+//       {
+//         name: 'State of a component',
+//         exercises: 14
+//       }
+//     ]
+//   }
+
+//   return (
+//     <div>
+//       <Header course={course.name}/>
+//       <Content parts={course.parts}/>       
+//       <Total parts={course.parts}/>
+//     </div>
+//   )
+// }
 
 //1.4
 // const App = () => {
