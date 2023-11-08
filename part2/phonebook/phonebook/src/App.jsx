@@ -51,7 +51,7 @@ const App = () => {
     setPersons(persons.concat(nameObject))
     setNewName('')
     setNewNumber('')
-    // console.log('button clicked', event.target)
+    console.log('button clicked', event.target)
   }
 
   const handlePersonChange = (event) => {
