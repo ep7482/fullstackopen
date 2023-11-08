@@ -4,20 +4,20 @@
 // import './App.css'
 
 import { useState } from 'react'
-
-const Person = (props) => {
-  return (
-    <div>
-      {props.name}
-    </div>
-  )
-}
+import Persons from './components/Persons'
+import Filter from './components/Filter'
+import PersonForm from './components/PersonForm'
 
 const App = () => {
   const [persons, setPersons] = useState([
-    { name: 'Arto Hellas' }
+    { name: 'Arto Hellas', number: '040-1234567', id:1 },
+    { name: 'Ada Lovelace', number: '39-44-5323523', id: 2 },
+    { name: 'Dan Abramov', number: '12-43-234345', id: 3 },
+    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 4 }
   ]) 
   const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [filterName, setFilterName] = useState('')
 
   const addName = (event) => {
     event.preventDefault()
@@ -31,13 +31,27 @@ const App = () => {
       return
     }
 
+    if (newNumber === '' && newName === '') {
+      alert('Please enter name and number')
+      return
+    } else if (newName === '') {
+      alert('Please enter name')
+      return
+    } else if (newNumber === '') {
+      alert('Please enter number')
+      return
+    }
+
     const nameObject = {
-      name: newName
+      name: newName,
+      number: newNumber,
+      id: persons.length + 1
     }
     
     setPersons(persons.concat(nameObject))
     setNewName('')
-    console.log('button clicked', event.target)
+    setNewNumber('')
+    // console.log('button clicked', event.target)
   }
 
   const handlePersonChange = (event) => {
@@ -45,25 +59,41 @@ const App = () => {
     setNewName(event.target.value)
   }
 
+  const handleNumberChange = (event) => {
+    console.log(event.target.value)
+    setNewNumber(event.target.value)
+  }
+
+  const handleFilterNameChange = (event) => {
+    console.log(event.target.value)
+    setFilterName(event.target.value)
+  }
+
+  var index
+  var personsToShow
+  const names = persons.map(person => person.name.toLowerCase())
+  if (names.includes(filterName.toLowerCase())) {
+    index = names.indexOf(filterName.toLowerCase()) + 1
+    personsToShow = persons.filter(person => person.id === index)
+    // console.log(index, persons.filter(person => person.id === index))
+  } else {
+    personsToShow = persons
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <form onSubmit={addName}>
-        <div>
-          name: 
-          <input 
-            value = {newName}
-            onChange={handlePersonChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <Filter filterName={filterName} handleFilterNameChange={handleFilterNameChange}/>
+      <h2>add a new</h2>
+      <PersonForm 
+          addName={addName}
+          newNumber={newNumber}
+          newName={newName}
+          handleNumberChange={handleNumberChange}
+          handlePersonChange={handlePersonChange}
+        />
       <h2>Numbers</h2>
-      {persons.map(person =>
-        <Person key={person.name} name={person.name} />
-      )}
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
