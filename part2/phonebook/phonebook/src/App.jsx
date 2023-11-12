@@ -25,13 +25,19 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault()
-    const names = persons.map(person => person.name)
+    const names = persons.map(person => person.name.toLowerCase())
+    
+    if (names.includes(newName.toLowerCase())) {
+      alert(`${newName} is already added to phonebook, replace the old number with new one?`)
+      const id = names.indexOf(newName.toLowerCase()) + 1
+      const personToChange = persons.find(p => p.id === id)
+      const changedPerson = {...personToChange, number: newNumber}
 
-    if (newName === 'Arto Hellas') {
-      alert('Arto Hellas is already added to phonebook')
-      return
-    } else if (names.includes(newName)) {
-      alert(`${newName} is already added to phonebook`)
+      personService
+        .update(id, changedPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
+        })
       return
     }
 
@@ -62,7 +68,6 @@ const App = () => {
 
   const deletePerson = (id) => {
     const personToDelete = persons.filter(p => p.id === id)[0]
-    console.log(personToDelete.name)
     if (confirm(`Delete ${personToDelete.name}?`)) {
       personService
         .deleteObject(personToDelete.id)
@@ -79,22 +84,25 @@ const App = () => {
   }
 
   const handlePersonChange = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     setNewName(event.target.value)
   }
 
   const handleNumberChange = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     setNewNumber(event.target.value)
   }
 
   const handleFilterNameChange = (event) => {
-    console.log(event.target.value)
+    // console.log(event.target.value)
     setFilterName(event.target.value)
   }
 
   var index, personsToShow
+  console.log(persons)
   const names = persons.map(person => person.name.toLowerCase())
+
+
   if (names.includes(filterName.toLowerCase())) {
     index = names.indexOf(filterName.toLowerCase()) + 1
     personsToShow = persons.filter(person => person.id === index)
