@@ -7,7 +7,7 @@ import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
+import personService from './services/persons'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -16,16 +16,12 @@ const App = () => {
   const [filterName, setFilterName] = useState('')
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    personService
+      .getAll()
+      .then(people => {
+        setPersons(people)
       })
   }, [])
-
-  console.log('render', persons.length, 'persons')
 
   const addName = (event) => {
     event.preventDefault()
@@ -53,13 +49,33 @@ const App = () => {
     const nameObject = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1
     }
     
-    setPersons(persons.concat(nameObject))
-    setNewName('')
-    setNewNumber('')
-    console.log('button clicked', event.target)
+    personService
+      .create(nameObject)
+      .then(nameObj => {
+        setPersons(persons.concat(nameObj))
+        setNewName('')
+        setNewNumber('')
+      })
+  }
+
+  const deletePerson = (id) => {
+    const personToDelete = persons.filter(p => p.id === id)[0]
+    console.log(personToDelete.name)
+    if (confirm(`Delete ${personToDelete.name}?`)) {
+      personService
+        .deleteObject(personToDelete.id)
+        .then(() => {
+          setPersons(persons.filter(p => p.id !== id))
+        })
+        .catch(error => {
+          alert(
+            `the person '${personToDelete.name}' was already deleted from server`
+          )
+          setPersons(persons.filter(p => p.id !== id))
+        })
+    }
   }
 
   const handlePersonChange = (event) => {
@@ -77,13 +93,11 @@ const App = () => {
     setFilterName(event.target.value)
   }
 
-  var index
-  var personsToShow
+  var index, personsToShow
   const names = persons.map(person => person.name.toLowerCase())
   if (names.includes(filterName.toLowerCase())) {
     index = names.indexOf(filterName.toLowerCase()) + 1
     personsToShow = persons.filter(person => person.id === index)
-    // console.log(index, persons.filter(person => person.id === index))
   } else {
     personsToShow = persons
   }
@@ -91,17 +105,22 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Filter filterName={filterName} handleFilterNameChange={handleFilterNameChange}/>
+      <Filter
+        filterName={filterName}
+        handleFilterNameChange={handleFilterNameChange}/>
       <h2>add a new</h2>
       <PersonForm 
-          addName={addName}
-          newNumber={newNumber}
-          newName={newName}
-          handleNumberChange={handleNumberChange}
-          handlePersonChange={handlePersonChange}
-        />
+        addName={addName}
+        newNumber={newNumber}
+        newName={newName}
+        handleNumberChange={handleNumberChange}
+        handlePersonChange={handlePersonChange}
+      />
       <h2>Numbers</h2>
-      <Persons personsToShow={personsToShow}/>
+      <Persons
+        personsToShow={personsToShow}
+        deletePerson={deletePerson}
+      />
     </div>
   )
 }
