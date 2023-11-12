@@ -50,6 +50,13 @@ const App = () => {
             setNotificationMessage(null)
           }, 5000)
         })
+        .catch((error) => {
+          setMessageType("error")
+          setNotificationMessage(
+            `Information of ${changedPerson.name} has already been removed from server`
+          )
+          setPersons(persons.filter(p => p.id !== id))
+        })
       return
     }
 
