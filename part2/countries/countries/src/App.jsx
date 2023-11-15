@@ -7,6 +7,10 @@ import axios from 'axios'
 function App() {
   const [countries, setCountries] = useState(null)
   const [value, setValue] = useState('')
+  // const [capital, setCapital] = useState('')
+  // const [area, setArea] = useState('')
+  // const [langs, setLangs] = useState([])
+  // const [flag, setFlag] = useState('')
   // const [countryInfo, setCountryInfo] = useState(null)
 
   useEffect(() => {
@@ -50,24 +54,36 @@ function App() {
   // console.log(langs.map(lang => Object.values(lang)))
   // console.log(langs.forEach(languages => Object.values(languages)))
 
-  let countriesToShow
+  let countriesToShow, capital, area
+  let langs = []
+  let flag = {png : ''}
   const countryFilter = countries.filter(country => country.name.toLowerCase().includes(value.toLowerCase()))
   if (countryFilter.length <= 10 && value.length != 0) {
     countriesToShow = countryFilter
-    if (countryFilter.length === 1) {
-      console.log(countryFilter)
+    // console.log(countriesToShow.length)
+    if (countriesToShow.length === 1) {
+      capital = countriesToShow[0].capital[0]
+      area = countriesToShow[0].area
+      flag = countriesToShow[0].flag
+      langs = countriesToShow[0].languages
+      // console.log(capital, area, flag, langs)
     }
   } else {
     countriesToShow = countries
+    capital = ''
+    area = ''
+    // flag = {png: ''}
+    langs = []
   }
+  // console.log(flag)
   // else if (value.length === 0) {
   //   countriesToShow = ["Please enter country"]
   // } else {
   //   countriesToShow = ["Too many matches, specify another filter"]
   // }
 
-  console.log(countriesToShow)
-
+  // console.log(countriesToShow)
+  console.log(langs)
   return (
     <div>
       <form>
@@ -76,6 +92,14 @@ function App() {
       {countriesToShow.map(country =>
         <div key={country.name}>
           {country.name}
+          <div>{capital}</div>
+          <div>{area}</div>
+          <div>{langs.map(lang => {
+            <li>
+              {lang}
+            </li>
+          })}</div>
+          <img src={flag.png} width="200" height="200"></img>
         </div>
       )}
     </div>
