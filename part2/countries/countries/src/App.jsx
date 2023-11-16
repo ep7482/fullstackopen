@@ -7,6 +7,8 @@ import axios from 'axios'
 function App() {
   const [countries, setCountries] = useState(null)
   const [value, setValue] = useState('')
+  const [toggle, setToggle] = useState(false)
+  const [currCountry, setCurrCountry] = useState('')
 
   useEffect(() => {
     console.log('fetching countries data')
@@ -31,6 +33,11 @@ function App() {
     console.log(event.target.value)
     setValue(event.target.value)
   }  
+
+  const handleToggle = (event) => {
+    console.log(toggle)
+    setToggle(!toggle)
+  }
   
   if (!countries) {
     return null
@@ -43,7 +50,7 @@ function App() {
       <form>
         find countries: <input value={value} onChange={handleChange}></input>
       </form>
-      <Countries countriesToShow={countryFilter}/>
+      <Countries countriesToShow={countryFilter} handleToggle={handleToggle} toggle={toggle}/>
     </div>
   )
 }
@@ -55,7 +62,7 @@ const Name = (props) => {
     )
   }
   return (
-    <div>{props.name}</div>
+    <>{props.name}</>
   )
 }
 
@@ -87,26 +94,28 @@ const Flag = (props) => (
 )
 
 const Country = (props) => {
-  if (props.len === 1) {
+  if (props.len === 1 || props.toggle === true) {
     return (
       <div>
-      <Name name={props.name} len={props.len}/>
-      <Capital capital={props.capital}/>
-      <Area area={props.area}/>
-      <Languages langs={props.langs} name={props.name}/>
-      <Flag flag={props.flag}/>
-    </div>
+        <Name name={props.name} len={props.len}/>
+        <Capital capital={props.capital}/>
+        <Area area={props.area}/>
+        <Languages langs={props.langs} name={props.name}/>
+        <Flag flag={props.flag}/>
+        <button onClick={() => props.handleToggle()}>show</button>
+      </div>
     )
   }
   return (
     <div>
       <Name name={props.name}/>
+      <button onClick={() => props.handleToggle()}>show</button>
     </div>
   )
 }
 
 const Countries = (props) => {
-  if (props.countriesToShow.length === 1) {
+  if (props.countriesToShow.length === 1 || props.toggle === true) {
     return (
       <div>
         {props.countriesToShow.map(country => 
@@ -118,6 +127,8 @@ const Countries = (props) => {
             langs={country.languages}
             flag={country.flag}
             len={props.countriesToShow.length}
+            toggle={props.toggle}
+            handleToggle={props.handleToggle}
           />
         )}
       </div>
@@ -136,6 +147,8 @@ const Countries = (props) => {
           key={country.name}
           name={country.name}
           len={props.countriesToShow.length}
+          toggle={props.toggle}
+          handleToggle={props.handleToggle}
         />
       )}
     </div>
