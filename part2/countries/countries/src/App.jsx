@@ -7,11 +7,6 @@ import axios from 'axios'
 function App() {
   const [countries, setCountries] = useState(null)
   const [value, setValue] = useState('')
-  // const [capital, setCapital] = useState('')
-  // const [area, setArea] = useState('')
-  // const [langs, setLangs] = useState([])
-  // const [flag, setFlag] = useState('')
-  // const [countryInfo, setCountryInfo] = useState(null)
 
   useEffect(() => {
     console.log('fetching countries data')
@@ -40,67 +35,108 @@ function App() {
   if (!countries) {
     return null
   }
-  // const langs = countries.map(country => {
-  //   const languages = country.languages
-  //   if (languages === null || languages === undefined) {
-  //     return ['No languages present']
-  //   }
-  //   return Object.values(languages)
-  // })
 
-  // console.log(countries)
-
-  // console.log(countries.map(country => country.languages === null || country.languages === undefined ? ['No languages present'] : Object.values(country.languages)))
-  // console.log(langs.map(lang => Object.values(lang)))
-  // console.log(langs.forEach(languages => Object.values(languages)))
-
-  let countriesToShow, capital, area
-  let langs = []
-  let flag = {png : ''}
   const countryFilter = countries.filter(country => country.name.toLowerCase().includes(value.toLowerCase()))
-  if (countryFilter.length <= 10 && value.length != 0) {
-    countriesToShow = countryFilter
-    // console.log(countriesToShow.length)
-    if (countriesToShow.length === 1) {
-      capital = countriesToShow[0].capital[0]
-      area = countriesToShow[0].area
-      flag = countriesToShow[0].flag
-      langs = countriesToShow[0].languages
-      // console.log(capital, area, flag, langs)
-    }
-  } else {
-    countriesToShow = countries
-    capital = ''
-    area = ''
-    // flag = {png: ''}
-    langs = []
-  }
-  // console.log(flag)
-  // else if (value.length === 0) {
-  //   countriesToShow = ["Please enter country"]
-  // } else {
-  //   countriesToShow = ["Too many matches, specify another filter"]
-  // }
 
-  // console.log(countriesToShow)
-  console.log(langs)
   return (
     <div>
       <form>
         find countries: <input value={value} onChange={handleChange}></input>
       </form>
-      {countriesToShow.map(country =>
-        <div key={country.name}>
-          {country.name}
-          <div>{capital}</div>
-          <div>{area}</div>
-          <div>{langs.map(lang => {
-            <li>
-              {lang}
-            </li>
-          })}</div>
-          <img src={flag.png} width="200" height="200"></img>
-        </div>
+      <Countries countriesToShow={countryFilter}/>
+    </div>
+  )
+}
+
+const Name = (props) => {
+  if (props.len === 1) {
+    return (
+      <h2>{props.name}</h2>
+    )
+  }
+  return (
+    <div>{props.name}</div>
+  )
+}
+
+const Capital = (props) => (
+  <div><b>Capital: </b>{props.capital}</div>
+)
+
+const Area = (props) => (
+  <div><b>Area: </b>{props.area}</div>
+)
+
+const Languages = (props) => {
+  return (
+    <div>
+      <b>Languages:</b>
+      {props.langs.map(lang =>
+        <li key={props.langs.indexOf(lang)}>
+          {lang}
+        </li>
+      )}
+    </div>
+  )
+}
+
+const Flag = (props) => (
+  <div>
+    <img src={props.flag.png} width="200" height="200"></img>
+  </div>
+)
+
+const Country = (props) => {
+  if (props.len === 1) {
+    return (
+      <div>
+      <Name name={props.name} len={props.len}/>
+      <Capital capital={props.capital}/>
+      <Area area={props.area}/>
+      <Languages langs={props.langs} name={props.name}/>
+      <Flag flag={props.flag}/>
+    </div>
+    )
+  }
+  return (
+    <div>
+      <Name name={props.name}/>
+    </div>
+  )
+}
+
+const Countries = (props) => {
+  if (props.countriesToShow.length === 1) {
+    return (
+      <div>
+        {props.countriesToShow.map(country => 
+          <Country
+            key={country.name}
+            name={country.name}
+            capital={country.capital}
+            area={country.area}
+            langs={country.languages}
+            flag={country.flag}
+            len={props.countriesToShow.length}
+          />
+        )}
+      </div>
+    )
+  } else if (props.countriesToShow.length > 10) {
+    return (
+      <div>
+        Too many matches, specify another filter
+      </div>
+    )
+  }
+  return (
+    <div>
+      {props.countriesToShow.map(country =>
+        <Country 
+          key={country.name}
+          name={country.name}
+          len={props.countriesToShow.length}
+        />
       )}
     </div>
   )
