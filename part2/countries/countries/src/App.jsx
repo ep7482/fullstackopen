@@ -22,12 +22,14 @@ function App() {
             capital: country.capital,
             area: country.area,
             languages: country.languages === null || country.languages === undefined ? ['No languages present'] : Object.values(country.languages),
-            flag: country.flags
+            flag: country.flags,
+            latlng: country.latlng
           })
         })
         setCountries(results)
       })
   }, [])
+
 
   const handleChange = (event) => {
     console.log(event.target.value)
@@ -108,6 +110,25 @@ const Flag = (props) => (
 const Country = (props) => {
   const country = props.count
   const isExpanded = props.expandCountries.includes(country.id)
+  const lat = country.latlng[0]
+  const lng = country.latlng[1]
+  const [weather, setWeather] = useState([])
+
+  useEffect(() => {
+    if (props.len === 1) {
+      axios
+        .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&exclude=minutely,hourly,daily,alerts&appid=${APIkey}`)
+        .then(response => {
+          const countryWeather = {
+            temp: response.current.temp,
+            windSpeed: response.current.wind_speed,
+            weth: response.current.weather
+          }
+          setWeather(countryWeather)
+        })
+    }
+  }, [])
+
   if (props.len === 1 || isExpanded) {
     return (
       <>
