@@ -18,6 +18,7 @@ function App() {
         const results = []
         response.data.forEach(country => {
           results.push({
+            id: results.length + 1, 
             name: country.name.common,
             capital: country.capital,
             area: country.area,
@@ -94,64 +95,39 @@ const Flag = (props) => (
 )
 
 const Country = (props) => {
-  if (props.len === 1 || props.toggle === true) {
+  const country = props.count
+  if (props.len === 1) {
     return (
-      <div>
-        <Name name={props.name} len={props.len}/>
-        <Capital capital={props.capital}/>
-        <Area area={props.area}/>
-        <Languages langs={props.langs} name={props.name}/>
-        <Flag flag={props.flag}/>
-        <button onClick={() => props.handleToggle()}>show</button>
-      </div>
+      <>
+        <Name name={country.name}/>
+        <Capital capital={country.capital}/>
+        <Area area={country.area}/>
+        <Languages langs={country.languages} />
+        <Flag flag={country.flag}/>
+      </>
     )
   }
   return (
     <div>
-      <Name name={props.name}/>
-      <button onClick={() => props.handleToggle()}>show</button>
+      <Name name={country.name}/>
     </div>
   )
 }
 
 const Countries = (props) => {
-  if (props.countriesToShow.length === 1 || props.toggle === true) {
+  if (props.countriesToShow.length > 10) {
     return (
-      <div>
-        {props.countriesToShow.map(country => 
-          <Country
-            key={country.name}
-            name={country.name}
-            capital={country.capital}
-            area={country.area}
-            langs={country.languages}
-            flag={country.flag}
-            len={props.countriesToShow.length}
-            toggle={props.toggle}
-            handleToggle={props.handleToggle}
-          />
-        )}
-      </div>
-    )
-  } else if (props.countriesToShow.length > 10) {
-    return (
-      <div>
+      <>
         Too many matches, specify another filter
-      </div>
+      </>
     )
   }
   return (
-    <div>
-      {props.countriesToShow.map(country =>
-        <Country 
-          key={country.name}
-          name={country.name}
-          len={props.countriesToShow.length}
-          toggle={props.toggle}
-          handleToggle={props.handleToggle}
-        />
+    <>
+      {props.countriesToShow.map(country => 
+        <Country key={country.id} count={country} len={props.countriesToShow.length}/>
       )}
-    </div>
+    </>
   )
 }
 
