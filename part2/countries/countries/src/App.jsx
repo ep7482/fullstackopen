@@ -7,8 +7,7 @@ import axios from 'axios'
 function App() {
   const [countries, setCountries] = useState(null)
   const [value, setValue] = useState('')
-  const [toggle, setToggle] = useState(false)
-  const [currCountry, setCurrCountry] = useState('')
+  const [expandCountries, setExpandCountries] = useState([])
 
   useEffect(() => {
     console.log('fetching countries data')
@@ -35,10 +34,18 @@ function App() {
     setValue(event.target.value)
   }  
 
-  const handleToggle = (event) => {
-    console.log(toggle)
-    setToggle(!toggle)
+  const handleToggle = (id) => {
+    setExpandCountries(prev => {
+      const isExpanded = prev.includes(id)
+      if (isExpanded) {
+        return prev.filter(x => x !== id)
+      } else {
+        return [...prev, id]
+      }
+    })
   }
+  
+  console.log(expandCountries)
   
   if (!countries) {
     return null
@@ -51,7 +58,11 @@ function App() {
       <form>
         find countries: <input value={value} onChange={handleChange}></input>
       </form>
-      <Countries countriesToShow={countryFilter} handleToggle={handleToggle} toggle={toggle}/>
+      <Countries
+        countriesToShow={countryFilter}
+        handleToggle={handleToggle}
+        expandCountries={expandCountries}
+      />
     </div>
   )
 }
@@ -96,7 +107,8 @@ const Flag = (props) => (
 
 const Country = (props) => {
   const country = props.count
-  if (props.len === 1) {
+  const isExpanded = props.expandCountries.includes(country.id)
+  if (props.len === 1 || isExpanded) {
     return (
       <>
         <Name name={country.name}/>
@@ -104,12 +116,14 @@ const Country = (props) => {
         <Area area={country.area}/>
         <Languages langs={country.languages} />
         <Flag flag={country.flag}/>
+        <button onClick={() => props.handleToggle(country.id)}>showLess</button>
       </>
     )
   }
   return (
     <div>
       <Name name={country.name}/>
+      <button onClick={() => props.handleToggle(country.id)}>show</button>
     </div>
   )
 }
@@ -125,7 +139,13 @@ const Countries = (props) => {
   return (
     <>
       {props.countriesToShow.map(country => 
-        <Country key={country.id} count={country} len={props.countriesToShow.length}/>
+        <Country
+          key={country.id}
+          count={country}
+          len={props.countriesToShow.length}
+          handleToggle={props.handleToggle}
+          expandCountries={props.expandCountries}
+        />
       )}
     </>
   )
