@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import axios from 'axios'
 // import './App.css'
 
+
 function App() {
   const [countries, setCountries] = useState(null)
   const [value, setValue] = useState('')
@@ -110,14 +111,17 @@ const Flag = (props) => (
 const Country = (props) => {
   const country = props.count
   const isExpanded = props.expandCountries.includes(country.id)
+  const api_key = import.meta.env.VITE_OPEN_WEATHER_API_KEY
   const lat = country.latlng[0]
   const lng = country.latlng[1]
+  const time = Date.now()
   const [weather, setWeather] = useState([])
 
+  
   useEffect(() => {
     if (props.len === 1) {
       axios
-        .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&exclude=minutely,hourly,daily,alerts&appid=${APIkey}`)
+        .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&dt=${time}&appid=${api_key}`)
         .then(response => {
           const countryWeather = {
             temp: response.current.temp,
@@ -127,7 +131,9 @@ const Country = (props) => {
           setWeather(countryWeather)
         })
     }
-  }, [])
+  }, [props.len === 1])
+
+  console.log("Weather: ", weather)
 
   if (props.len === 1 || isExpanded) {
     return (
