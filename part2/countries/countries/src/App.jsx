@@ -73,7 +73,7 @@ function App() {
 const Name = (props) => {
   if (props.len === 1) {
     return (
-      <h2>{props.name}</h2>
+      <h1>{props.name}</h1>
     )
   }
   return (
@@ -121,12 +121,13 @@ const Country = (props) => {
   useEffect(() => {
     if (props.len === 1) {
       axios
-        .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&dt=${time}&appid=${api_key}`)
+        .get(`https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lng}&units=metric&dt=${time}&appid=${api_key}`)
         .then(response => {
+          console.log(response)
           const countryWeather = {
-            temp: response.current.temp,
-            windSpeed: response.current.wind_speed,
-            weth: response.current.weather
+            temp: response.data.current.temp,
+            windSpeed: response.data.current.wind_speed,
+            icon: response.data.current.weather[0].icon
           }
           setWeather(countryWeather)
         })
@@ -135,8 +136,8 @@ const Country = (props) => {
 
   console.log("Weather: ", weather)
 
-  if (props.len === 1 || isExpanded) {
-    return (
+  if (isExpanded) {
+        return (
       <>
         <Name name={country.name}/>
         <Capital capital={country.capital}/>
@@ -144,6 +145,22 @@ const Country = (props) => {
         <Languages langs={country.languages} />
         <Flag flag={country.flag}/>
         <button onClick={() => props.handleToggle(country.id)}>showLess</button>
+      </>
+    )
+  }
+
+  if (props.len === 1) {
+    return (
+      <>
+        <Name name={country.name} len={props.len}/>
+        <Capital capital={country.capital}/>
+        <Area area={country.area}/>
+        <Languages langs={country.languages} />
+        <Flag flag={country.flag}/>
+        <h2>Weather in {country.capital}</h2>
+        <div>temperature {weather.temp} Celcius</div>
+        <img src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}/>
+        <div>Wind {weather.windSpeed} m/s</div>
       </>
     )
   }
