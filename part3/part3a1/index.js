@@ -31,6 +31,7 @@
 
 const express = require('express')
 const app = express()
+const cors = require('cors')
 
 
 
@@ -44,6 +45,7 @@ const requestLogger = (request, response, next) => {
 
 app.use(express.json())
 app.use(requestLogger)
+app.use(cors())
 
 let notes = [
     {
@@ -59,6 +61,11 @@ let notes = [
     {
         id: 3,
         content: "GET and POST are the most important methods of HTTP protocol",
+        important: true
+    },
+    {
+        id: 4,
+        content: "testing",
         important: true
     }
 ]
@@ -80,6 +87,13 @@ app.get('/api/notes/:id', (request, response) => {
         response.status(404).end()
     }
 })
+
+// app.put('/api/notes/:id', (request, response) => {
+//     const id = Number(request.params.id)
+//     const note = notes.find(note=> note.id === id)
+//     // note.important = !request.body.important
+//     console.log(note)
+// })
 
 app.delete('/api/notes/:id', (request, response) => {
     const id = Number(request.params.id)
@@ -120,7 +134,7 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
