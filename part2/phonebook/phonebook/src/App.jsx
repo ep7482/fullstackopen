@@ -120,18 +120,18 @@ const App = () => {
   }
 
   const handleFilterNameChange = (event) => {
-    // console.log(event.target.value)
+    console.log(event.target.value)
     setFilterName(event.target.value)
   }
 
   var index, personsToShow
-  console.log(persons)
+  // console.log(persons)
   const names = persons.map(person => person.name.toLowerCase())
-
+  const ids = persons.map(person => person.id)
 
   if (names.includes(filterName.toLowerCase())) {
-    index = names.indexOf(filterName.toLowerCase()) + 1
-    personsToShow = persons.filter(person => person.id === index)
+    index = names.indexOf(filterName.toLowerCase())
+    personsToShow = persons.filter(person => person.id === ids[index])
   } else {
     personsToShow = persons
   }
