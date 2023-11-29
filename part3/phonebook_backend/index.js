@@ -15,6 +15,7 @@ var morgan = require('morgan')
 morgan.token('body', (request) => JSON.stringify(request.body))
 
 app.use(express.json())
+app.use(express.static('dist'))
 // app.use(requestLogger)
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 app.use(cors())

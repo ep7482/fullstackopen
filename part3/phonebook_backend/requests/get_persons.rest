@@ -1,0 +1,2 @@
+GET https://phonebook-6q0j.onrender.com/api/persons
+Content-Type: application/json
