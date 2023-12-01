@@ -28,11 +28,24 @@
 // const PORT = 3001
 // app.listen(PORT)
 // console.log(`Server running on port ${PORT}`)
-
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
+const mongoose = require('mongoose')
+const mongodbPassword = process.env.VITE_MONGODB_PASSWORD
 
+const url = `mongodb+srv://epalma7482:${mongodbPassword}@cluster0.sh7mhbj.mongodb.net/noteApp?retryWrites=true&w=majority`
+
+mongoose.set('strictQuery', false)
+mongoose.connect(url)
+
+const noteSchema = new mongoose.Schema({
+    content: String,
+    important: Boolean,
+})
+
+const Note = mongoose.model('Note', noteSchema)
 
 
 const requestLogger = (request, response, next) => {
@@ -76,7 +89,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/notes', (request, response) => {
-  response.json(notes)
+  Note.find({}).then(notes => {
+    response.json(notes)
+  })
 })
 
 app.get('/api/notes/:id', (request, response) => {
