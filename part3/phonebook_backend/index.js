@@ -1,7 +1,10 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
 const cors = require('cors')
 var morgan = require('morgan')
+const Person = require('./models/person') 
+const savePerson = require('./mongoose_modules/save')
 
 
 // const requestLogger = (request, response, next) => {
@@ -48,7 +51,9 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    response.json(persons)
+    Person.find({}).then(persons => {
+        response.json(persons)
+    })
 })
 
 app.get('/api/info', (request, response) => {
@@ -59,13 +64,16 @@ app.get('/api/info', (request, response) => {
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-    if (person) {
+    // const id = Number(request.params.id)
+    // const person = persons.find(person => person.id === id)
+    // if (person) {
+    //     response.json(person)
+    // } else {
+    //     response.status(404).end()
+    // }
+    Person.findById(request.params.id).then(person => {
         response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
@@ -94,18 +102,37 @@ app.post('/api/persons', (request, response) => {
         })
     }
 
-
     const person = {
-        id: generateId(),
         name: body.name,
         number: body.number,
     }
 
     persons = persons.concat(person)
-    response.json(person)
+    //Variable needs to share between files
+    // const savePerson = new SavedPerson(person)
+
+    // const url = process.env.MONGODB_URI
+    // const personName = person.name
+    // const personNumber = person.number
+
+    // mongoose.set('strictQuery', false)
+    // mongoose.connect(url)
+
+    
+
+    // SavePerson.save().then(result => {
+    //     console.log(`Added ${personName} number ${personNumber} to phonebook`)
+    //     mongoose.connection.close()
+    // })
+
+    /************ */
+    // response.json(person)
+    savePerson(person).then(persons => {
+        response.json(persons)
+    })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
