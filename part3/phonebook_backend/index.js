@@ -88,6 +88,21 @@ const generateId = () => {
     return Math.floor(Math.random() * 10000)
 }
 
+app.put('/api/persons/:id', (request, response, next) => {
+    const body = request.body
+
+    // const person = {
+    //     name: body.name,
+    //     number: body.number,
+    // }
+
+    Person.findByIdAndUpdate(request.params.id, {$set: {'number':body.number}}, {new: true})
+        .then(updatedPerson => {
+            response.json(updatedPerson)
+        })
+        .catch(error => next(error))
+})
+
 app.post('/api/persons', (request, response) => {
     const body = request.body
     const nameExist = persons.find(person => person.name === body.name)

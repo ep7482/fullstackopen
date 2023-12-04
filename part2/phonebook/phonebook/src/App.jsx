@@ -32,7 +32,8 @@ const App = () => {
     
     if (names.includes(newName.toLowerCase())) {
       alert(`${newName} is already added to phonebook, replace the old number with new one?`)
-      const id = names.indexOf(newName.toLowerCase()) + 1
+      // const id = names.indexOf(newName.toLowerCase()) + 1
+      const id = persons.filter(person => person.name.toLowerCase() === newName.toLowerCase())[0].id
       const personToChange = persons.find(p => p.id === id)
       const changedPerson = {...personToChange, number: newNumber}
 
