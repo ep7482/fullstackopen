@@ -49,30 +49,6 @@
 //         delete returnedObject.__v
 //     }
 // })
-
-// const Note = mongoose.model('Note', noteSchema)
-require('dotenv').config()
-const express = require('express')
-const app = express()
-const cors = require('cors')
-const Note = require('./models/note')
-const note = require('./models/note')
-
-const requestLogger = (request, response, next) => {
-    console.log('Method:', request.method)
-    console.log('Path:  ', request.path)
-    console.log('Body:  ', request.body)
-    console.log('---')
-    next()
-}
-
-
-
-app.use(express.json())
-app.use(cors())
-app.use(express.static('dist'))
-// app.use(requestLogger)
-
 // let notes = [
 //     {
 //         id: 1,
@@ -95,8 +71,26 @@ app.use(express.static('dist'))
 //         important: true
 //     }
 // ]
+// const Note = mongoose.model('Note', noteSchema)
+require('dotenv').config()
+const express = require('express')
+const app = express()
+const cors = require('cors')
+const Note = require('./models/note')
+const note = require('./models/note')
 
+const requestLogger = (request, response, next) => {
+    console.log('Method:', request.method)
+    console.log('Path:  ', request.path)
+    console.log('Body:  ', request.body)
+    console.log('---')
+    next()
+}
 
+app.use(express.json())
+app.use(cors())
+app.use(express.static('dist'))
+// app.use(requestLogger)
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World! Test</h1>')
@@ -182,9 +176,10 @@ const errorHandler = (error, request, response, next) => {
 
     next(error)
 }
+//handler of requests with result to errors
 app.use(errorHandler)
 
-//handler of requests with result to errors
+
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
