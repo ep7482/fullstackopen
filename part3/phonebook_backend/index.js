@@ -51,29 +51,31 @@ app.get('/', (request, response) => {
 })
 
 app.get('/api/persons', (request, response) => {
-    Person.find({}).then(persons => {
-        response.json(persons)
-    })
+    Person.find({})
+        .then(persons => {
+            response.json(persons)
+        })
+        .catch(error => next(error))
 })
 
 app.get('/api/info', (request, response) => {
-    response.send(`
-        <p>Phonebook has info for ${persons.length} people</p>
-        ${Date()}
-    `)
+    Person.countDocuments({})
+        .then(count => {
+            response.send(`
+                <p>Phonebook has info for ${count} people</p>
+                ${Date()}
+            `)
+        })
+        .catch(error => next(error))
 })
 
+
 app.get('/api/persons/:id', (request, response) => {
-    // const id = Number(request.params.id)
-    // const person = persons.find(person => person.id === id)
-    // if (person) {
-    //     response.json(person)
-    // } else {
-    //     response.status(404).end()
-    // }
-    Person.findById(request.params.id).then(person => {
-        response.json(person)
-    })
+    Person.findById(request.params.id)
+        .then(person => {
+            response.json(person)
+        })
+        .catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
@@ -90,11 +92,6 @@ const generateId = () => {
 
 app.put('/api/persons/:id', (request, response, next) => {
     const body = request.body
-
-    // const person = {
-    //     name: body.name,
-    //     number: body.number,
-    // }
 
     Person.findByIdAndUpdate(request.params.id, {$set: {'number':body.number}}, {new: true})
         .then(updatedPerson => {
@@ -123,28 +120,12 @@ app.post('/api/persons', (request, response) => {
     }
 
     persons = persons.concat(person)
-    //Variable needs to share between files
-    // const savePerson = new SavedPerson(person)
 
-    // const url = process.env.MONGODB_URI
-    // const personName = person.name
-    // const personNumber = person.number
-
-    // mongoose.set('strictQuery', false)
-    // mongoose.connect(url)
-
-    
-
-    // SavePerson.save().then(result => {
-    //     console.log(`Added ${personName} number ${personNumber} to phonebook`)
-    //     mongoose.connection.close()
-    // })
-
-    /************ */
-    // response.json(person)
-    savePerson(person).then(persons => {
-        response.json(persons)
-    })
+    savePerson(person)
+        .then(persons => {
+            response.json(persons)
+        })
+        .catch(error => next(error))
 })
 
 const unknownEndpoint = (request, response) => {
