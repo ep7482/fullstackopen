@@ -77,7 +77,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const Note = require('./models/note')
-const note = require('./models/note')
+// const note = require('./models/note')
 
 const requestLogger = (request, response, next) => {
     console.log('Method:', request.method)
@@ -96,10 +96,12 @@ app.get('/', (request, response) => {
   response.send('<h1>Hello World! Test</h1>')
 })
 
-app.get('/api/notes', (request, response) => {
-  Note.find({}).then(notes => {
-    response.json(notes)
-  })
+app.get('/api/notes', (request, response, next) => {
+  Note.find({})
+    .then(notes => {
+        response.json(notes)
+    })
+    .catch(error => next(error))
 })
 
 app.get('/api/notes/:id', (request, response, next) => {
