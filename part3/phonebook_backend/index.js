@@ -93,14 +93,14 @@ const generateId = () => {
 app.put('/api/persons/:id', (request, response, next) => {
     const body = request.body
 
-    Person.findByIdAndUpdate(request.params.id, {$set: {'number':body.number}}, {new: true})
+    Person.findByIdAndUpdate(request.params.id, {$set: {'number':body.number}}, {new: true, runValidators: true, context: 'query'})
         .then(updatedPerson => {
             response.json(updatedPerson)
         })
         .catch(error => next(error))
 })
 
-app.post('/api/persons', (request, response) => {
+app.post('/api/persons', (request, response, next) => {
     const body = request.body
     const nameExist = persons.find(person => person.name === body.name)
 
@@ -139,6 +139,8 @@ const errorHandler = (error, request, response, next) => {
 
     if (error.name === 'CastError') {
         return response.status(400).send({error: 'malformatted id'})
+    } else if (error.name === 'ValidationError') {
+        return response.status(400).json({error: error.message})
     }
 
     next(error)

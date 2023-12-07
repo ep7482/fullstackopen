@@ -75,7 +75,7 @@ const App = () => {
     const nameObject = {
       name: newName,
       number: newNumber,
-    }
+    }  
     
     personService
       .create(nameObject)
@@ -90,6 +90,13 @@ const App = () => {
         setTimeout(() => {
           setNotificationMessage(null)
         }, 5000)
+      })
+      .catch(error => {
+        console.log(error.response.data.error)
+        setMessageType("error")
+        setNotificationMessage(
+          error.response.data.error
+        )
       })
   }
 

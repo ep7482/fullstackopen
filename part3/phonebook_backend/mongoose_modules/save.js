@@ -33,17 +33,18 @@ const savePerson = (savePerson) => {
         number: savePerson.number,
     })
 
-    person.save().then(result => {
-        console.log(`Added ${person.number} number ${person.name} to phonebook`)
-        // mongoose.connection.close()
-    })
-    return new Promise((resolve, reject) => {
-        if (person) {
-            resolve(person)
-        } else {
-            reject('Person cannot be saved')
-        }
-    })
+    // person.save().then(result => {
+    //     console.log(`Added ${person.number} number ${person.name} to phonebook`)
+    //     // mongoose.connection.close()
+    // })
+    return person.save()
+        .then(savedPerson => {
+            console.log(`Added ${person.number} number ${person.name} to phonebook`)
+            return savedPerson
+        })
+        .catch(error => {
+            throw error
+        })
 }
 
 module.exports = savePerson 
