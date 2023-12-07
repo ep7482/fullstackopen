@@ -102,28 +102,30 @@ app.put('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response, next) => {
     const body = request.body
-    const nameExist = persons.find(person => person.name === body.name)
 
     if (!body.name || !body.number) {
         return response.status(400).json({
             error: 'Name or number is missing'
         })
-    } else if (nameExist) {
-        return response.status(400).json({
-            error: 'Name must be unique'
-        })
     }
 
-    const person = {
-        name: body.name,
-        number: body.number,
-    }
+    Person.findOne({ name: body.name })
+        .then(existingPerson => {
+            if (existingPerson) {
+                return response.status(400).json({ error: 'name must be unique' })
+            }
 
-    persons = persons.concat(person)
+            const person = {
+                name: body.name,
+                number: body.number,
+            }
 
-    savePerson(person)
-        .then(persons => {
-            response.json(persons)
+            savePerson(person)
+                .then(persons => {
+                    
+                    response.json(persons)
+                })
+                .catch(error => next(error))
         })
         .catch(error => next(error))
 })
