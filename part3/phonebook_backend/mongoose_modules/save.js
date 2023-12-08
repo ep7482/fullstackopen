@@ -47,4 +47,4 @@ const savePerson = (savePerson) => {
         })
 }
 
-module.exports = savePerson 
+module.exports = savePerson
