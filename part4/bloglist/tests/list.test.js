@@ -65,8 +65,6 @@ describe('total likes', () => {
 
 
 	test('dummy returns one', () => {
-		const blogs = []
-
 		const result = listHelper.dummy(blogs)
 		expect(result).toBe(1)
 	})
@@ -79,5 +77,32 @@ describe('total likes', () => {
 	test('of many is calculated right', () => {
 		const result = listHelper.totalLikes(blogs)
 		expect(result).toBe(36)
+	})
+
+	test('returns null for an empty array', () => {
+		const result = listHelper.favoriteBlog([])
+		expect(result).toBeNull()
+	})
+
+	test('returns the single blog when list has only one blog', () => {
+		const result = listHelper.favoriteBlog([blogs[0]])
+		expect(result).toEqual(blogs[0])
+	})
+
+	test('returns the first most liked blog in case of a tie', () => {
+		const tiedBlogs = [
+			{ title: 'Blog 1', likes: 5 },
+			{ title: 'Blog 2', likes: 4 },
+			{ title: 'Blog 3', likes: 2 },
+			{ title: 'Blog 4', likes: 5 }
+		]
+		const result = listHelper.favoriteBlog(tiedBlogs)
+		console.log('result', result)
+		expect(result).toEqual(tiedBlogs[0])
+	})
+
+	test('most liked blog', () => {
+		const result = listHelper.favoriteBlog(blogs)
+		expect(result).toEqual(blogs[2])
 	})
 })
