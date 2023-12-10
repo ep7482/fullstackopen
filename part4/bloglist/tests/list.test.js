@@ -97,12 +97,19 @@ describe('total likes', () => {
 			{ title: 'Blog 4', likes: 5 }
 		]
 		const result = listHelper.favoriteBlog(tiedBlogs)
-		console.log('result', result)
 		expect(result).toEqual(tiedBlogs[0])
 	})
 
 	test('most liked blog', () => {
 		const result = listHelper.favoriteBlog(blogs)
 		expect(result).toEqual(blogs[2])
+	})
+
+	test('most blogs', () => {	
+		const result = listHelper.mostBlogs(blogs)
+		expect(result).toEqual({
+			'author': 'Robert C. Martin',
+			'blogs': 3
+		})
 	})
 })
