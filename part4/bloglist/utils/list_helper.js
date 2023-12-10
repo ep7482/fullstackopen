@@ -39,9 +39,26 @@ const mostBlogs = (blogs) => {
 	// return most
 }
 
+const mostLikes = (blogs) => {
+	if (blogs.length === 0) {
+		return null
+	}
+	const authorLikes = _.map(blogs, (blog) => ({'author':blog.author, 'likes':blog.likes}))
+	const mergedAuthorLikes = _.reduce(authorLikes, (result, {author, likes}) => {
+		result[author] = result[author] ? result[author] += likes : result[author] = likes
+		return result
+	}, {})
+	const most = _.maxBy(Object.entries(mergedAuthorLikes), authorLikes => authorLikes[1])
+	return {
+		'author': most[0],
+		'likes': most[1]
+	}
+}
+
 module.exports = {
 	dummy,
 	totalLikes,
 	favoriteBlog,
-	mostBlogs
+	mostBlogs,
+	mostLikes
 }
