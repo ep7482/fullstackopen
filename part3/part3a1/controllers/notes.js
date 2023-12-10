@@ -21,7 +21,6 @@ notesRouter.get('/:id', (request, response, next) => {
 
 notesRouter.post('/', (request, response, next) => {
   const body = request.body
-
   const note = new Note({
     content: body.content,
     important: body.important || false,
