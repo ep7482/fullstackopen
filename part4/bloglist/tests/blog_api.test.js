@@ -35,6 +35,29 @@ test('unique identifier is defined', async () => {
 	})
 })
 
+test('a blog can be added', async () => {
+	const newBlog = {
+		title: 'Test Blog',
+		author: 'Test Author',
+		url: 'https://testurl.com',
+		likes: 5
+	}
+
+	await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(201)
+		.expect('Content-Type', /application\/json/)
+
+	const blogsAtEnd = await helper.blogsInDb()
+	expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+	const title = blogsAtEnd.map(b => b.title)
+	expect(title).toContain(
+		'Test Blog'
+	)
+})
+
 afterAll(async () => {
 	await mongoose.connection.close()
 })
