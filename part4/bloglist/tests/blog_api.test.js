@@ -74,6 +74,38 @@ test('if likes missing, default to 0', async () => {
 	expect(likes).toBe(0)
 })
 
+test('if title is missing, return 400', async () => {
+	const newBlog = {
+		author: 'Test 2 Author',
+		url: 'https://testurl2.com',
+		likes: 10
+	}
+
+	const response = await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(400)
+
+	expect(response.body.error).toContain('Blog validation failed: title: Path `title` is required.')
+
+})
+
+test('if url is missing, return 400', async () => {
+	const newBlog = {
+		title: 'Test 3 Blog',
+		author: 'Test 3 Author',
+		likes: 5
+	}
+
+	const response = await api
+		.post('/api/blogs')
+		.send(newBlog)
+		.expect(400)
+
+	expect(response.body.error).toContain('Blog validation failed: url: Path `url` is required.')
+})
+
+
 afterAll(async () => {
 	await mongoose.connection.close()
 })
