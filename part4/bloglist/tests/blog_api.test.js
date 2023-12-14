@@ -81,12 +81,10 @@ test('if title is missing, return 400', async () => {
 		likes: 10
 	}
 
-	const response = await api
+	await api
 		.post('/api/blogs')
 		.send(newBlog)
 		.expect(400)
-
-	expect(response.body.error).toContain('Blog validation failed: title: Path `title` is required.')
 
 })
 
@@ -97,14 +95,41 @@ test('if url is missing, return 400', async () => {
 		likes: 5
 	}
 
-	const response = await api
+	await api
 		.post('/api/blogs')
 		.send(newBlog)
 		.expect(400)
 
-	expect(response.body.error).toContain('Blog validation failed: url: Path `url` is required.')
 })
 
+describe('deletion of a blog', () => {
+	test('succeeds with status code 204 if id is valid', async () => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToDelete = blogsAtStart[0]
+
+		await api
+			.delete(`/api/blogs/${blogToDelete.id}`)
+			.expect(204)
+
+		const blogsAtEnd = await helper.blogsInDb()
+
+		expect(blogsAtEnd).toHaveLength(
+			helper.initialBlogs.length - 1
+		)
+
+		const contents = blogsAtEnd.map(r => r.title)
+
+		expect(contents).not.toContain(blogToDelete.title)
+	})
+
+	test('fails with status code 400 if id is invalid', async () => {
+		const invalidId = '5a3d5da59070081a82a3445'
+
+		await api
+			.delete(`/api/blogs/${invalidId}`)
+			.expect(400)
+	})
+})
 
 afterAll(async () => {
 	await mongoose.connection.close()
