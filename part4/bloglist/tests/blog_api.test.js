@@ -131,6 +131,69 @@ describe('deletion of a blog', () => {
 	})
 })
 
+describe('updating a blog', () => {
+	test('update title of blog with status code 200', async () => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToUpdate = blogsAtStart[0]
+
+		const updatedBlog = {
+			title: 'Updated Blog',
+			author: blogToUpdate.author,
+			url: blogToUpdate.url,
+			likes: blogToUpdate.likes
+		}
+
+		await api
+			.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(updatedBlog)
+			.expect(200)
+	})
+
+	test('update author of blog with status code 200', async () => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToUpdate = blogsAtStart[0]
+
+		const updatedBlog = {
+			title: blogToUpdate.title,
+			author: 'Updated Author',
+			url: blogToUpdate.url,
+			likes: blogToUpdate.likes
+		}
+
+		await api
+			.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(updatedBlog)
+			.expect(200)
+	})
+
+	test('update url of blog with status code 200', async () => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToUpdate = blogsAtStart[0]
+
+		const updatedBlog = {
+			title: blogToUpdate.title,
+			author: blogToUpdate.author,
+			url: 'https://updatedurl.com',
+			likes: blogToUpdate.likes
+		}
+
+		await api
+			.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(updatedBlog)
+			.expect(200)
+	})
+
+	test ('return status 404 if blog does not exist', async () => {
+		const validNonexistingId = await helper.nonExistingId()
+		const blogsAtStart = await helper.blogsInDb()
+
+		await api
+			.put(`/api/blogs/${validNonexistingId}`)
+			.send(blogsAtStart[0])
+			.expect(404)
+	})
+})
+
 afterAll(async () => {
 	await mongoose.connection.close()
 })
