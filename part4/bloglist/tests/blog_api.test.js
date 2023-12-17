@@ -183,6 +183,23 @@ describe('updating a blog', () => {
 			.expect(200)
 	})
 
+	test('update likes of blog with status code 200', async () => {
+		const blogsAtStart = await helper.blogsInDb()
+		const blogToUpdate = blogsAtStart[0]
+
+		const updatedBlog = {
+			title: blogToUpdate.title,
+			author: blogToUpdate.author,
+			url: blogToUpdate.url,
+			likes: 781
+		}
+
+		await api
+			.put(`/api/blogs/${blogToUpdate.id}`)
+			.send(updatedBlog)
+			.expect(200)
+	})
+
 	test ('return status 404 if blog does not exist', async () => {
 		const validNonexistingId = await helper.nonExistingId()
 		const blogsAtStart = await helper.blogsInDb()
