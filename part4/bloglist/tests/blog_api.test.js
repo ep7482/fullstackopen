@@ -39,6 +39,22 @@ test('unique identifier is defined', async () => {
 })
 
 test('a blog can be added', async () => {
+	const newUser = {
+		username: 'testuser',
+		name: 'Test User',
+		password: 'testpassword'
+	}
+
+	// Create User
+	await api
+		.post('/api/users')
+		.send(newUser)
+
+	// Login User
+	const result = await api
+		.post('/api/login')
+		.send(newUser)
+
 	const newBlog = {
 		title: 'Test Blog',
 		author: 'Test Author',
@@ -48,6 +64,7 @@ test('a blog can be added', async () => {
 
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `Bearer ${result.body.token}`)
 		.send(newBlog)
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
@@ -62,12 +79,30 @@ test('a blog can be added', async () => {
 })
 
 test('if likes missing, default to 0', async () => {
+	const newUser = {
+    username: 'testuser',
+		name: 'Test User',
+    password: 'testpassword'
+  }
+
+  // Create user
+  await api
+    .post('/api/users')
+    .send(newUser)
+
+  // Log in user
+  const result = await api
+    .post('/api/login')
+    .send(newUser)
+
 	const newBlog = {
-		title: 'Test Blog'
+		title: 'Test Blog',
+		url: 'https://testurl.com'
 	}
 
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `Bearer ${result.body.token}`)
 		.send(newBlog)
 		.expect(201)
 		.expect('Content-Type', /application\/json/)
@@ -78,6 +113,22 @@ test('if likes missing, default to 0', async () => {
 })
 
 test('if title is missing, return 400', async () => {
+	const newUser = {
+    username: 'testuser',
+		name: 'Test User',
+    password: 'testpassword'
+  }
+
+  // Create user
+  await api
+    .post('/api/users')
+    .send(newUser)
+
+  // Log in user
+  const result = await api
+    .post('/api/login')
+    .send(newUser)
+
 	const newBlog = {
 		author: 'Test 2 Author',
 		url: 'https://testurl2.com',
@@ -86,12 +137,29 @@ test('if title is missing, return 400', async () => {
 
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `Bearer ${result.body.token}`)
 		.send(newBlog)
 		.expect(400)
 
 })
 
 test('if url is missing, return 400', async () => {
+	const newUser = {
+    username: 'testuser',
+		name: 'Test User',
+    password: 'testpassword'
+  }
+
+  // Create user
+  await api
+    .post('/api/users')
+    .send(newUser)
+
+  // Log in user
+  const result = await api
+    .post('/api/login')
+    .send(newUser)
+
 	const newBlog = {
 		title: 'Test 3 Blog',
 		author: 'Test 3 Author',
@@ -100,6 +168,7 @@ test('if url is missing, return 400', async () => {
 
 	await api
 		.post('/api/blogs')
+		.set('Authorization', `Bearer ${result.body.token}`)
 		.send(newBlog)
 		.expect(400)
 
@@ -107,29 +176,73 @@ test('if url is missing, return 400', async () => {
 
 describe('deletion of a blog', () => {
 	test('succeeds with status code 204 if id is valid', async () => {
+		const newUser = {
+			username: 'testuser',
+			name: 'Test User',
+			password: 'testpassword'
+		}
+
+		// Create user
+		await api
+			.post('/api/users')
+			.send(newUser)
+	
+		// Log in user
+		const result = await api
+			.post('/api/login')
+			.send(newUser)
+
+		const blogToDelete = {
+			title: 'Test Blog',
+			author: 'Test Author',
+			url: 'https://testurl.com',
+			likes: 5
+		}
+
+		const createdBlog = await api
+			.post('/api/blogs')
+			.set('Authorization', `Bearer ${result.body.token}`)
+			.send(blogToDelete)
+
 		const blogsAtStart = await helper.blogsInDb()
-		const blogToDelete = blogsAtStart[0]
 
 		await api
-			.delete(`/api/blogs/${blogToDelete.id}`)
+			.delete(`/api/blogs/${createdBlog.body.id}`)
+			.set('Authorization', `Bearer ${result.body.token}`)
 			.expect(204)
 
 		const blogsAtEnd = await helper.blogsInDb()
 
 		expect(blogsAtEnd).toHaveLength(
-			helper.initialBlogs.length - 1
+			blogsAtStart.length - 1
 		)
 
 		const contents = blogsAtEnd.map(r => r.title)
-
 		expect(contents).not.toContain(blogToDelete.title)
 	})
 
 	test('fails with status code 400 if id is invalid', async () => {
 		const invalidId = '5a3d5da59070081a82a3445'
 
+		const newUser = {
+			username: 'testuser',
+			name: 'Test User',
+			password: 'testpassword'
+		}
+	
+		// Create user
+		await api
+			.post('/api/users')
+			.send(newUser)
+	
+		// Log in user
+		const result = await api
+			.post('/api/login')
+			.send(newUser)
+
 		await api
 			.delete(`/api/blogs/${invalidId}`)
+			.set('Authorization', `Bearer ${result.body.token}`)
 			.expect(400)
 	})
 })
@@ -386,6 +499,17 @@ describe('when there is initially one user in db', () => {
 		
 		const usersAtEnd = await helper.usersInDb()
 		expect(usersAtEnd).toEqual(usersAtStart)
+	})
+
+	test('Unauthorized if token not provided', async () => {
+		const newBlog = {
+			title: 'Test Blog',
+		}
+
+		await api
+			.post('/api/blogs')
+			.send(newBlog)
+			.expect(401)
 	})
 })
 
