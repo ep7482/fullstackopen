@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,6 +12,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -27,14 +29,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-  // useEffect(() => {
-  //   if (user) {
-  //     blogService.getAll(user.id).then(blogs =>
-  //       setBlogs( blogs )
-  //     )
-  //   }
-  // }, [user])
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -53,7 +47,7 @@ const App = () => {
       setUsername('')
       setPassword('')
     } catch (exception) {
-      // setErrorMessage('Wrong credentials')
+      setErrorMessage('Wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -80,12 +74,14 @@ const App = () => {
         setAuthor('')
         setTitle('')
         setUrl('')
+        setErrorMessage(`a new blog '${returnedBlog.title}' by '${returnedBlog.author}' added`)
       })
   }
 
   const loginForm = () => (
     <div>
       <h2>Log in to application</h2>
+      <Notification message={errorMessage} type='error'/>
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -149,6 +145,7 @@ const App = () => {
   const blogsShow = () => (
     <div>
       <h1>Blogs</h1>
+      <Notification message={errorMessage} type='success'/>
       <p>{user.name} logged in</p>
       {blogForm()}
       {blogs.map(blog =>
