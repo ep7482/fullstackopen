@@ -21,7 +21,7 @@ const App = () => {
   useEffect(() => {
     blogService.getAll().then(blogs =>
       setBlogs( blogs )
-    )  
+    )
   }, [])
 
   useEffect(() => {
@@ -120,13 +120,13 @@ const App = () => {
 
   const loginForm = () => (
     <Togglable buttonLabel='login'>
-      <LoginForm 
+      <LoginForm
         handleSubmit={handleLogin}
         handleUsernameChange={({ target }) => setUsername(target.value)}
         handlePasswordChange={({ target }) => setPassword(target.value)}
         username={username}
         password={password}
-        errormessage={errorMessage}    
+        errormessage={errorMessage}
       />
     </Togglable>
   )
@@ -143,7 +143,7 @@ const App = () => {
       <p>{user.name} logged in</p>
       {blogForm()}
       {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-        <Blog 
+        <Blog
           key={blog.id}
           blog={blog}
           loggedInUser={user}
