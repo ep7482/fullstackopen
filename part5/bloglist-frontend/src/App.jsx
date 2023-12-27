@@ -15,9 +15,6 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const blogFormRef = useRef()
 
@@ -30,8 +27,8 @@ const App = () => {
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser')
     if (loggedUserJSON) {
-      // const user = JSON.parse(loggedUserJSON)
-      const user = loggedUserJSON
+      const user = JSON.parse(loggedUserJSON)
+      // const user = loggedUserJSON
       setUser(user)
       blogService.setToken(user.token)
     }
@@ -70,22 +67,12 @@ const App = () => {
     setUser(null)
   }
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: title,
-      author: author,
-      url: url,
-    }
-
+  const addBlog = (blogObject) => {
     blogFormRef.current.toggleVisibility()
     blogService
       .create(blogObject)
       .then(returnedBlog => {
         setBlogs(blogs.concat(returnedBlog))
-        setAuthor('')
-        setTitle('')
-        setUrl('')
         setErrorMessage(`a new blog '${returnedBlog.title}' by '${returnedBlog.author}' added`)
         setTimeout(() => {
           setErrorMessage(null)
@@ -114,15 +101,7 @@ const App = () => {
 
   const blogForm = () => (
     <Togglable buttonLabel='new blog' ref={blogFormRef}>
-      <BlogForm 
-        handleSubmit={addBlog}
-        handleTitleChange={({ target }) => setTitle(target.value)}
-        handleAuthorChange={({ target }) => setAuthor(target.value)}
-        handleUrlChange={({ target }) => setUrl(target.value)}
-        title={title}
-        author={author}
-        url={url}
-      />
+      <BlogForm createBlog={addBlog} />
     </Togglable>
   )
 
