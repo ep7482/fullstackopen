@@ -102,6 +102,22 @@ const App = () => {
       })
   }
 
+  const handleDelete = (blogObject) => {
+    if (window.confirm(`Remove blog ${blogObject.title} by ${blogObject.author}`)) {
+      blogService
+        .remove(blogObject.id)
+        .then(() => {
+          setBlogs(blogs.filter(blog => blog.id !== blogObject.id))
+        })
+        .catch(error => {
+          setErrorMessage(error.response.data.error)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+        })
+    }
+  }
+
   const loginForm = () => (
     <Togglable buttonLabel='login'>
       <LoginForm 
@@ -127,7 +143,13 @@ const App = () => {
       <p>{user.name} logged in</p>
       {blogForm()}
       {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
-        <Blog key={blog.id} blog={blog} handleLike={handleLike}/>
+        <Blog 
+          key={blog.id}
+          blog={blog}
+          loggedInUser={user}
+          handleLike={handleLike}
+          handleDelete={handleDelete}
+        />
       )}
       <button onClick={handleLogout}>logout</button>
     </div>
