@@ -126,7 +126,7 @@ const App = () => {
       <Notification message={errorMessage} type='success'/>
       <p>{user.name} logged in</p>
       {blogForm()}
-      {blogs.map(blog =>
+      {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
         <Blog key={blog.id} blog={blog} handleLike={handleLike}/>
       )}
       <button onClick={handleLogout}>logout</button>
