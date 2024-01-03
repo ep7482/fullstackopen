@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const Blog = ({ blog, loggedInUser, handleLike, handleDelete }) => {
@@ -19,7 +19,7 @@ const Blog = ({ blog, loggedInUser, handleLike, handleDelete }) => {
 
   return (
     <div style={blogStyle}>
-      <div style={hideWhenVisible}>
+      <div style={hideWhenVisible} className='titleAuthor'>
         {blog.title} {blog.author} <button onClick={() => setVisible(true)}>view</button>
       </div>
       <div style={showWhenVisible}>
