@@ -48,5 +48,16 @@ describe('Bloglist App', () => {
       })
       cy.contains('Test Title Test Author')
     })
+    it('A blog can be liked', () => {
+      cy.createBlog({
+        title: 'Test Title',
+        author: 'Test Author',
+        url: 'Test-URL.com',
+        likes: 0
+      })
+      cy.contains('view').click()
+      cy.contains('like').click()
+      cy.contains('likes 1')
+    })
   })
 })
