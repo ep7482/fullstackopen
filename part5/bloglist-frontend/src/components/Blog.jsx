@@ -28,7 +28,7 @@ const Blog = ({ blog, loggedInUser, handleLike, handleDelete }) => {
         <div>likes {blog.likes} <button onClick={() => handleLike(blog)}>like</button></div>
         <div>{blog.user?.name ? blog.user.name : 'User Unknown'}</div>
         <div style={removeButtonVisible}>
-          <button onClick={() => handleDelete(blog)}>remove</button>
+          <button id='remove-button' onClick={() => handleDelete(blog)}>remove</button>
         </div>
       </div>
     </div>

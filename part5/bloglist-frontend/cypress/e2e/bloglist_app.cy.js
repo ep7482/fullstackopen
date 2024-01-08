@@ -1,3 +1,5 @@
+// const { response } = require("../../../../part4/bloglist/app")
+
 describe('Bloglist App', () => {
   beforeEach(() => {
     cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
@@ -72,5 +74,34 @@ describe('Bloglist App', () => {
     cy.contains('view').click()
     cy.contains('remove').click()
     cy.contains('Test Title Test Author').should('not.exist')
+  })
+
+  describe('New User Added', async () => {
+    beforeEach(() => {
+      const user2 = {
+        name: 'Test User2',
+        username: 'testuser2',
+        password: 'testpassword2'
+      }
+      cy.request('POST', `${Cypress.env('BACKEND')}/users`, user2)
+      cy.visit('')
+    })
+    it.only('Only the user who create a blog can see the remove button', () => {      cy.login({ username: 'testuser', password: 'testpassword' })
+      cy.createBlog({
+        title: 'Test Title',
+        author: 'Test Author',
+        url: 'Test-URL.com',
+        likes: 0
+      })
+      cy.contains('logout').click()
+
+      cy.contains('login').click()
+      cy.get('#username').type('testuser2')
+      cy.get('#password').type('testpassword2')
+      cy.get('#login-button').click()
+
+      cy.wait(1000)
+      cy.contains('view').click()
+      cy.get('#remove-button').should('not.be.visible')    })
   })
 })
