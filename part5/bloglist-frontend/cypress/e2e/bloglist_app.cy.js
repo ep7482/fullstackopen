@@ -60,4 +60,17 @@ describe('Bloglist App', () => {
       cy.contains('likes 1')
     })
   })
+
+  it('User can delete a blog', () => {
+    cy.login({ username: 'testuser', password: 'testpassword' })
+    cy.createBlog({
+      title: 'Test Title',
+      author: 'Test Author',
+      url: 'Test-URL.com',
+      likes: 0
+    })
+    cy.contains('view').click()
+    cy.contains('remove').click()
+    cy.contains('Test Title Test Author').should('not.exist')
+  })
 })
