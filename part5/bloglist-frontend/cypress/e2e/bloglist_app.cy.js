@@ -86,7 +86,7 @@ describe('Bloglist App', () => {
       cy.request('POST', `${Cypress.env('BACKEND')}/users`, user2)
       cy.visit('')
     })
-    it.only('Only the user who create a blog can see the remove button', () => {      cy.login({ username: 'testuser', password: 'testpassword' })
+    it('Only the user who create a blog can see the remove button', () => {      cy.login({ username: 'testuser', password: 'testpassword' })
       cy.createBlog({
         title: 'Test Title',
         author: 'Test Author',
@@ -103,5 +103,34 @@ describe('Bloglist App', () => {
       cy.wait(1000)
       cy.contains('view').click()
       cy.get('#remove-button').should('not.be.visible')    })
+  })
+
+  describe('Multiple Blogs Added', () => {
+    beforeEach(() => {
+      cy.login({ username: 'testuser', password: 'testpassword' })
+      cy.createBlog({
+        title: 'Test Title 1',
+        author: 'Test Author 1',
+        url: 'Test-URL.com',
+        likes: 0
+      })
+      cy.createBlog({
+        title: 'Test Title 2',
+        author: 'Test Author 2',
+        url: 'Test-URL.com',
+        likes: 5
+      })
+      cy.createBlog({
+        title: 'Test Title 3',
+        author: 'Test Author 3',
+        url: 'Test-URL.com',
+        likes: 10
+      })
+    })
+    it('blogs are ordered by likes', () => {
+      cy.get('.blog').eq(0).should('contain', 'Test Title 3')
+      cy.get('.blog').eq(1).should('contain', 'Test Title 2')
+      cy.get('.blog').eq(2).should('contain', 'Test Title 1')
+    })
   })
 })
