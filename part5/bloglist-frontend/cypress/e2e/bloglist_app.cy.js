@@ -1,16 +1,16 @@
 describe('Bloglist App', () => {
   beforeEach(() => {
-    cy.request('POST', 'http://localhost:3003/api/testing/reset')
+    cy.request('POST', `${Cypress.env('BACKEND')}/testing/reset`)
     const user = {
       name: 'Test User',
       username: 'testuser',
       password: 'testpassword'
     }
-    cy.request('POST', 'http://localhost:3003/api/users/', user)
-    cy.visit('http://localhost:5173')
+    cy.request('POST', `${Cypress.env('BACKEND')}/users`, user)
+    cy.visit('')
   })
   it('front page can be opened', () => {
-    cy.visit('http://localhost:5173')
+    cy.visit('')
     cy.contains('Bloglist')
   })
 
@@ -32,6 +32,21 @@ describe('Bloglist App', () => {
       cy.get('#password').type('wrongtestpassword')
       cy.get('#login-button').click()
       cy.contains('Wrong username or password')
+    })
+  })
+
+  describe('when logged in', () => {
+    beforeEach(() => {
+      cy.login({ username: 'testuser', password: 'testpassword' })
+    })
+    it('A blog can be created', () => {
+      cy.createBlog({
+        title: 'Test Title',
+        author: 'Test Author',
+        url: 'Test-URL.com',
+        likes: 0
+      })
+      cy.contains('Test Title Test Author')
     })
   })
 })
