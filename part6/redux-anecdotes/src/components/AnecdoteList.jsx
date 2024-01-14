@@ -19,18 +19,19 @@ const Anecdote = ({ anecdote, handleClick }) => {
 const AnecdoteList = () => {
 	const dispatch = useDispatch()
 
-	const anecdotes = useSelector(({filter, anecdotes}) => {
+	let anecdotes = useSelector(({filter, anecdotes}) => {
 		if (filter === '') {
 			return anecdotes
 		}
 		return anecdotes.filter(anecdote => anecdote.content.toLowerCase().includes(filter.toLowerCase()))
 	})
 
+	anecdotes = [...anecdotes].sort((a, b) => b.votes - a.votes)
 	const vote = (id) => dispatch(voteAct(id))
 
 	return (
 		<div>
-			{anecdotes.sort((a, b) => b.votes - a.votes).map(anecdote =>
+			{anecdotes.map(anecdote =>
 				<Anecdote
 					key={anecdote.id}
 					anecdote={anecdote}
